@@ -1,0 +1,9 @@
+{
+	"dirs": {
+		"iddoData": "C:/Users/sm/Documents/Local/IDDO Data/IDDO_CV_2020_3_Nicholson/DATA - 2020-02-26",
+		"inBns": "./inbns",
+		"bns": "./bns",
+		"out": "./out",
+		"temp": "./temp"
+	}
+}

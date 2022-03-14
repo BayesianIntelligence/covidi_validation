@@ -1,0 +1,166 @@
+{
+	"BL_Age": {
+		"inVar": "AGE",
+		"levels":   [1, 3, 8, 14, 17, 25, 35, 45, 55, 65, 75, 85],
+		"code":   [1, 2, 3, 4,  5,  13, 6,  7,  8,  9,  10, 11, 12]
+	},
+	"BL_Gender": {
+		"inVar": "SEX",
+		"map": {
+			"M": 1,
+			"F": 2,
+			"U": "*"
+		}
+	},
+	"BL_Gender": {
+		"inVar": "SEX",
+		"map": {
+			"M": 1,
+			"F": 2,
+			"U": "*"
+		}
+	},
+	"BL_Smoking": {
+		"inVar": "SMOKING",
+		"map": {
+			"Reported": 7,
+			"ND": 4
+		}
+	},
+	"BL_Comorb_WithDamageDiabetes": {
+		"inVar": ["DIABETES", "DIABETES___TYPE_2"],
+		"map": {
+			"Reported": 1,
+			"ND": 3
+		},
+		"combine": "min(a for a in args if isinstance(a, (int,float)))"
+	},
+	"BL_Comorb_ChronPulmDisease": {
+		"inVar": ["CHRONIC_PULMONARY_DISEASE"],
+		"map": {
+			"Reported": 1,
+			"ND": 2
+		},
+		"combine": "min(a for a in args if isinstance(a, (int,float)))"
+	},
+	"BL_Comorb_ChronicHeartFailure": {
+		"inVar": ["CHRONIC_CARDIAC_DISEASE"],
+		"map": {
+			"Reported": 1,
+			"ND": 2
+		},
+		"combine": "min(a for a in args if isinstance(a, (int,float)))",
+		"comment": "No matching LEOSS var. FIX"
+	},
+	"ci_BL_BMI": {
+		"compute": "float(row['ci_vs_weight'])/(float(row['ci_vs_height'])/100)**2 if row['ci_vs_weight'] and row['ci_vs_height'] else None"
+	},
+	"BL_BMI": {
+		"inVar": ["ci_vs_bmi", "ci_BL_BMI"],
+		"levels": [18.5, 24.9, 29.9, 34.9],
+		"code":  [1,   2,    3,    4,    5],
+		"combine": "max(a for a in args if isinstance(a, (int,float)))"
+	},
+	"BL_UCStartDay": {
+		"compute": "row['uc']"
+	},
+	"BL_COStartDay": {
+		"compute": "row['co']"
+	},
+	"BL_CRStartDay": {
+		"compute": "row['cr']"
+	},
+	"BL_REStartDay": {
+		"compute": "row['rc']"
+	},
+	"BL_LastKnownStatus": {
+		"compute": "3 if row['dt'] else 2"
+	},
+	"BL_Admission": {
+		"compute": "0"
+	},
+	"BL_Duration_InpatientStay": {
+		"compute": "max((row[c] for c in ['uc', 'co', 'cr', 'rc', 'dt'] if isinstance(row[c],(int,float))), default=10000)"
+	},
+	"{phase}_Vital_RespRate{worst}": {
+		"phased": true,
+		"inVar": "ci_Respiratory_Rate",
+		"inVarChosen": ["furthest", 18],
+		"levels": [16, 21, 29],
+		"code":  [1, 2,  3,  4],
+		"comment": "Normal respiratory range 14-22, midpoint 18"
+	},
+	"{phase}_Vital_Pulse{worst}": {
+		"phased": true,
+		"inVar": "ci_Pulse_Rate",
+		"inVarChosen": "max",
+		"levels": [45, 60, 90, 120],
+		"code": [1,  2,  3,  4,   5]
+	},
+	"{phase}_Lab_TroponineT": {
+		"phased": true,
+		"inVar": ["ci_TROPONI", "ci_TROPONIN"],
+		"inVarChosen": "max",
+		"levels": [0.04, 0.08, 0.2, 0.4, 0.8],
+		"code": [1,    2,    3,   4,   5,   6],
+		"combine": "max(a for a in args if isinstance(a, (int,float)))",
+		"comment": "Normal levels are below 0.04 ng/ml. Other levels multiplied out as per LEOSS"
+	},
+	"{phase}_Vital_SystolicBP{worst}": {
+		"phased": true,
+		"inVar": "ci_Systolic_Blood_Pressure",
+		"inVarChosen": "max",
+		"levels": [80, 100, 120, 140, 180],
+		"code": [1,  2,   3,   4,   5,   6]
+	},
+	"{phase}_Vital_DiastolicBP{worst}": {
+		"phased": true,
+		"inVar": "ci_Systolic_Blood_Pressure",
+		"inVarChosen": "max",
+		"levels": [40, 60, 90, 110],
+		"code": [1,  2,  3,  4,   5]
+	},
+	"{phase}_HematoLab_Neutrophils": {
+		"phased": true,
+		"inVar": "ci_NEUT",
+		"inVarChosen": "max",
+		"levels": [0.1, 0.3, 0.5, 2, 5, 9],
+		"code":  [6,  7,   8,   9, 10,11,12]
+	},
+	"{phase}_HematoLab_Lympocytes": {
+		"phased": true,
+		"inVar": "ci_LYM",
+		"inVarChosen": "max",
+		"levels": [0.1, 0.3, 0.5, 0.8, 1.5, 3],
+		"code":  [6,  7,   8,   9,   10,  11,12]
+	},
+	"{phase}_HematoLab_Hemoglobin": {
+		"phased": true,
+		"inVar": "ci_HGB",
+		"inVarChosen": "max",
+		"levels": [6, 8, 10, 12, 15],
+		"code": [6, 7, 8,  9,  10, 11]
+	},
+	"{phase}_Lab_LDH": {
+		"phased": true,
+		"inVar": "ci_HGB",
+		"inVarChosen": "max",
+		"levels": [300, 600, 1500, 3000],
+		"code": [7,   1,   2,    3,    4]
+	},
+	"{phase}_Lab_DDimer": {
+		"phased": true,
+		"inVar": "ci_DDIMER",
+		"inVarChosen": "max",
+		"levels": [0.5, 1, 2.5, 5, 10],
+		"code": [1,   2, 3,   4, 5,  6]
+	},
+	"{phase}_Lab_Platelets": {
+		"phased": true,
+		"inVar": "ci_PLAT",
+		"inVarChosen": "max",
+		"levels": [10, 50, 120, 550, 800],
+		"code": [1,  2,  3,   4,   5,   8],
+		"comment": "There is nothing labelled in LEOSS above 800, but I think it might be category 8"
+	}
+}
